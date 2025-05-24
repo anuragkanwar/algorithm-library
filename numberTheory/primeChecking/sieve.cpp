@@ -112,27 +112,33 @@ const int mxn25 = 2e5 + 1;
 const ll MXN = 1e9 + 1;
 const ll MOD = 1e9 + 7;
 
-bool checkSinglePrime() {
+void sieve(vb &isPrime, int n) {
+
+  isPrime[0] = isPrime[1] = false;
+
+  for (ll i = 4; i <= n; i += 2) {
+    isPrime[i] = false;
+  }
+
+  for (ll i = 3; i * i <= n; i += 2) {
+    if (isPrime[i]) {
+      for (ll j = i * i; j <= n; j += (i << 1)) {
+        isPrime[j] = false;
+      }
+    }
+  }
+}
+
+void init() {
+
   int n;
   cin >> n;
 
-  if (n == 0 || n == 1)
-    return false;
-  if (n == 2 || n == 3)
-    return true;
+  vb isPrime(n + 1, true);
+  sieve(isPrime, n);
 
-  if (n % 2 == 0 || n % 3 == 0)
-    return false;
-
-  for (int i = 5; i * i <= n; i += 6) {
-    if (n % i == 0 || n % (i + 2) == 0) {
-      return false;
-    }
-  }
-  return true;
+  printvec(isPrime);
 }
-
-void init() { cout << checkSinglePrime(); }
 
 int main() {
   ios_base::sync_with_stdio(0);

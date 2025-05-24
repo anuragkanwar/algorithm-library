@@ -112,27 +112,32 @@ const int mxn25 = 2e5 + 1;
 const ll MXN = 1e9 + 1;
 const ll MOD = 1e9 + 7;
 
-bool checkSinglePrime() {
+void preProcessSpf(vi &spf, int n) {
+
+  for (ll i = 4; i <= n; i += 2) {
+    spf[i] = 2;
+  }
+
+  for (ll i = 3; i * i <= n; i += 2) {
+    if (spf[i] == i) {
+      for (ll j = i * i; j <= n; j += (i << 1)) {
+        spf[j] = i;
+      }
+    }
+  }
+}
+
+void init() {
   int n;
   cin >> n;
 
-  if (n == 0 || n == 1)
-    return false;
-  if (n == 2 || n == 3)
-    return true;
+  vi spf(n + 1);
+  iota(all(spf), 0);
 
-  if (n % 2 == 0 || n % 3 == 0)
-    return false;
+  preProcessSpf(spf, n);
 
-  for (int i = 5; i * i <= n; i += 6) {
-    if (n % i == 0 || n % (i + 2) == 0) {
-      return false;
-    }
-  }
-  return true;
+  printvec(spf);
 }
-
-void init() { cout << checkSinglePrime(); }
 
 int main() {
   ios_base::sync_with_stdio(0);

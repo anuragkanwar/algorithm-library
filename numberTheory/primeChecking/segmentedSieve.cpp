@@ -1,3 +1,4 @@
+#include <cmath>
 #define _USE_MATH_DEFINES
 #include <bits/stdc++.h>
 using namespace std;
@@ -112,27 +113,55 @@ const int mxn25 = 2e5 + 1;
 const ll MXN = 1e9 + 1;
 const ll MOD = 1e9 + 7;
 
-bool checkSinglePrime() {
-  int n;
-  cin >> n;
+void segSieve(vb &isPrime, ll l, ll r) {
+  int n = ceil(sqrt(r));
 
-  if (n == 0 || n == 1)
-    return false;
-  if (n == 2 || n == 3)
-    return true;
+  // simple Sieve upto sqrt(r)
+  vl Primes;
 
-  if (n % 2 == 0 || n % 3 == 0)
-    return false;
+  vb ip(n + 1, true);
 
-  for (int i = 5; i * i <= n; i += 6) {
-    if (n % i == 0 || n % (i + 2) == 0) {
-      return false;
+  ip[0] = ip[1] = false;
+
+  for (ll i = 4; i <= n; i += 2) {
+    ip[i] = false;
+  }
+
+  for (ll i = 3; i * i <= n; i += 2) {
+    if (ip[i]) {
+      for (ll j = i * i; j <= n; j += (i << 1)) {
+        ip[j] = false;
+      }
     }
   }
-  return true;
+
+  // check all Primes here, above is only runing till sqrt(n)
+  for (ll i = 0; i <= n; i++) {
+    if (ip[i]) {
+      Primes.pb(i);
+    }
+  }
+
+  // run through all primes and mark non prime
+  for (auto &p : Primes) {
+    ll st = max(p * p, ((l + p - 1) / p) * p) - l;
+
+    for (ll i = st; i <= r - l + 1; i += p) {
+      isPrime[i] = false;
+    }
+  }
 }
 
-void init() { cout << checkSinglePrime(); }
+void init() {
+  int l, r;
+  cin >> l >> r;
+  int n = r - l + 1;
+  vb isPrime(n + 1, true);
+
+  segSieve(isPrime, l, r);
+
+  printvec(isPrime);
+}
 
 int main() {
   ios_base::sync_with_stdio(0);
